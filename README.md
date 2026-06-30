@@ -133,6 +133,20 @@ Parte de nuestra exploración incluyó validaciones estadísticas en Python para
 En la carpeta `reports/powerbi/` encontrarás el archivo `Proyecto-Equipo1.pbit`. 
 Al abrir esta plantilla en Power BI, te pedirá las credenciales de tu base de datos local PostgreSQL. Una vez conectada, los gráficos interactivos cobrarán vida, permitiéndote explorar la rentabilidad por puerto, exportador, continente y fecha.
 
+<div align="center">
+  <img src="assets/dashboard_1.png" alt="Dashboard Principal" width="800" style="border-radius:10px; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"/>
+  <br>
+  <em>Vista principal del Dashboard de Rentabilidad de Palta Hass.</em>
+</div>
+
+<br>
+
+<div align="center">
+  <img src="assets/dashboard_2.png" alt="Análisis Detallado" width="800" style="border-radius:10px; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"/>
+  <br>
+  <em>Desglose de exportaciones y análisis financiero.</em>
+</div>
+
 Para leer el análisis exhaustivo del proyecto, consulta la carpeta `reports/documents/` donde encontrarás el PDF final.
 
 ---
