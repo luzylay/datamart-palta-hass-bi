@@ -1,15 +1,23 @@
 # Project BI Course - Palta Hass
 
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?logo=postgresql&logoColor=white)
+![Power BI](https://img.shields.io/badge/PowerBI-F2C811?logo=powerbi&logoColor=black)
+
 Repositorio organizado para el proyecto de Inteligencia de Negocios sobre el análisis de rentabilidad de la palta Hass.
 
 ## Estructura
 
 - `src/etl/`: scripts ETL en Python
-- `sql/`: script de creación del Data Mart
-- `docs/`: documentación académica del proyecto
-- `reports/`: entregables y salidas del proyecto
-- `assets/`: recursos auxiliares
-- `backups/`: copias de respaldo si se necesitan
+- `src/analysis/`: scripts analíticos (validaciones DAX, estacionalidad, etc.)
+- `src/utils/`: scripts auxiliares para manejo de documentos PDF/Word
+- `sql/`: script de creación del Data Mart y modelos relacionales
+- `docs/`: documentación académica del proyecto y diccionarios de datos
+- `reports/`: entregables finales, documentos formales y plantillas de Power BI
+- `data/raw/`: archivos Excel y CSV de origen (ignorados en git por su peso)
+- `assets/`: recursos auxiliares (imágenes, logos)
+- `backups/`: copias de respaldo de base de datos (ignorados en git)
 
 ## Scripts principales
 
