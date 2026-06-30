@@ -11,3 +11,8 @@ env/
 conversation*.json
 *.tmp
 *.bak
+
+# Ignore large raw data and database backups (Best Practices)
+data/raw/*.csv
+data/raw/*.xlsx
+backups/*.sql

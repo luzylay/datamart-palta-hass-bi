@@ -1,0 +1,117 @@
+﻿Document: Proyecto_IB_Grupo01.docx
+
+--- MATCH IN TABLE 13 ---
+['Dimensin', 'Qu permite analizar?']
+['DIM_TIEMPO', 'Evolucin temporal (ao, trimestre, mes, semana, da)']
+['DIM_UBICACION', 'Anlisis por pas y continente de destino']
+['DIM_PAIS_TLC (subdimensin)', 'Acuerdos comerciales y aranceles por pas (mercados "Premium")']
+['DIM_PRODUCTO', 'Informacin base del producto (partida arancelaria)']
+['DIM_VARIEDAD_CALIDAD', 'Calidad (CAT 1, CAT 2) y mtodo de produccin (orgnico/convencional)']
+['DIM_EXPORTADOR', 'Competidores en el mercado peruano']
+['DIM_ADUANA', 'Puertos y puntos de embarque']
+['DIM_FINANZAS', 'Tipo de cambio (BCRP) y aranceles (MINCETUR)']
+['DIM_COSTO', 'Costos referenciales de produccin, empaque y logstica']
+
+--- MATCH IN TABLE 16 ---
+['N', 'Pregunta de negocio', 'Dimensiones involucradas', 'Dirigido a', 'Propsito']
+['1', 'Cmo evoluciona el precio promedio FOB por kilogramo a lo largo del tiempo (mensual, anual), y cmo se compara esta evolucin con el ratio de rentabilidad estimado?', 'DIM_TIEMPO', 'Planeamiento Estratgico', 'Identificar tendencias estacionales y correlacin entre precio y rentabilidad']
+['2', 'Qu pases y continentes presentan consistentemente un precio promedio FOB/kg superior y un ratio de rentabilidad estimado ms alto? (Pregunta clave)', 'DIM_UBICACION, DIM_PAIS_TLC', 'Gerencia General / Comercio Exterior', 'Clasificar mercados "Premium" (con TLC, arancel 0%, alta rentabilidad)']
+['3', 'Cul es el nivel de concentracin de las exportaciones por pas destino? Existe riesgo de dependencia excesiva de pocos mercados?', 'DIM_UBICACION', 'Planeamiento Estratgico', 'Evaluar diversificacin geogrfica y mitigar riesgos']
+['4', 'Qu nivel de concentracin presenta el mercado de exportadores peruanos (ndice HHI)? Existen pocos actores dominantes o el mercado est diversificado?', 'DIM_EXPORTADOR', 'Finanzas / Comercio Exterior', 'Comprender el nivel de competencia en el mercado']
+['5', 'Qu aduanas o puertos de salida concentran el mayor volumen exportado y presentan mejor precio promedio por kilogramo?', 'DIM_ADUANA', 'Comercio Exterior', 'Optimizar rutas logsticas y seleccionar puertos ms eficientes']
+['6', 'Qu relacin existe entre el volumen exportado (escala) y el precio promedio FOB/kg? Existen economas de escala o mercados premium de menor volumen?', 'FACT_RENTABILIDAD', 'Gerencia General', 'Definir estrategia de volumen vs. precio']
+
+--- MATCH IN TABLE 19 ---
+['Tipo de anlisis', 'Dimensin utilizada', 'Qu permite evaluar?']
+['Anlisis de competencia', 'DIM_EXPORTADOR', 'Identificar principales exportadores y calcular el ndice HHI']
+['Anlisis logstico', 'DIM_ADUANA', 'Comparar eficiencia por puerto de salida y optimizar rutas']
+['Anlisis de riesgos financieros', 'DIM_FINANZAS', 'Incorporar tipo de cambio (BCRP) y aranceles (MINCETUR)']
+['Anlisis de calidad de producto', 'DIM_VARIEDAD_CALIDAD', 'Segmentar por calidad (CAT 1, CAT 2) y mtodo de produccin']
+
+--- MATCH IN TABLE 20 ---
+['Tipo', 'Tabla', 'Propsito']
+['Dimensin principal', 'DIM_TIEMPO', 'Analizar evolucin temporal (ao, trimestre, mes, semana, da)']
+['Dimensin principal', 'DIM_UBICACION', 'Analizar por pas y continente de destino']
+['Dimensin principal', 'DIM_PRODUCTO', 'Informacin base de la palta Hass']
+['Dimensin principal', 'DIM_EXPORTADOR', 'Identificar competidores en el mercado peruano']
+['Dimensin principal', 'DIM_ADUANA', 'Analizar puertos y puntos de embarque']
+['Subdimensin', 'DIM_PAIS_TLC (dependiente de DIM_UBICACION)', 'Acuerdos comerciales y aranceles por pas destino']
+['Dimensin principal', 'DIM_VARIEDAD_CALIDAD', 'Variedad, calidad y mtodo de produccin (independiente)']
+
+--- MATCH IN TABLE 22 ---
+['Nota', 'Descripcin']
+['Competencia y Logstica', 'Las dimensiones DIM_EXPORTADOR y DIM_ADUANA permiten calcular el ndice de Concentracin de Mercado (HHI) y optimizar rutas de exportacin.']
+['Costos (SCD Tipo 2)', 'DIM_COSTO se implementa con una estrategia SCD Tipo 2 (Slowly Changing Dimension) para mantener el historial de cambios en los costos de produccin, empaque y logstica. El detalle de atributos se presenta en la seccin 5.2.']
+['Fuentes Externas', 'El enriquecimiento con BCRP (tipo de cambio) y MINCETUR (aranceles) permite calcular un Margen Neto Ajustado que supera la limitacin de los datos brutos de SUNAT.']
+
+--- MATCH IN TABLE 58 ---
+['Campo', 'Descripcin', 'Uso en el proyecto']
+['CNAN', 'Partida arancelaria', 'Filtro (0804400000) para DIM_PRODUCTO']
+['FECHA', 'Fecha de embarque', 'DIM_TIEMPO']
+['CPAIS', 'Cdigo de pas destino', 'DIM_UBICACION']
+['PAIS_DESC', 'Nombre del pas', 'DIM_UBICACION']
+['FOB_DOLPOL', 'Valor FOB en dlares', 'FACT_RENTABILIDAD.Valor_FOB']
+['PESO_NETO', 'Peso neto en kilogramos', 'FACT_RENTABILIDAD.Volumen_Exportado']
+['NRO_DOCU', 'RUC del exportador', 'DIM_EXPORTADOR']
+['EXPORTADOR', 'Nombre del exportador', 'DIM_EXPORTADOR']
+['CADUANA', 'Cdigo de aduana', 'DIM_ADUANA']
+['ADUA_DESC', 'Descripcin de aduana', 'DIM_ADUANA']
+['DESC_ADIC / DESC_COM', 'Descripcin adicional del producto', 'Extraccin de variedad (Hass), calidad y mtodo orgnico para DIM_VARIEDAD_CALIDAD']
+
+--- MATCH IN TABLE 88 ---
+['Componente', 'Descripcin']
+['Motor de base de datos', 'PostgreSQL (local)']
+['Tabla de hechos', 'FACT_RENTABILIDAD']
+['Tablas de dimensiones principales', 'DIM_TIEMPO, DIM_UBICACION, DIM_PRODUCTO, DIM_VARIEDAD_CALIDAD, DIM_EXPORTADOR, DIM_ADUANA, DIM_FINANZAS, DIM_COSTO']
+['Subdimensiones (normalizacin Copo de Nieve)', 'DIM_PAIS_TLC (conectada a DIM_UBICACION)']
+
+--- MATCH IN TABLE 95 ---
+['Campo', 'Tipo de dato', 'Descripcin', 'Fuente / Clculo']
+['ID_Rentabilidad (PK)', 'INTEGER', 'Identificador nico de cada registro', 'Autogenerado (SERIAL)']
+['FK_Tiempo', 'INTEGER', 'Llave fornea a DIM_TIEMPO', 'Asignacin desde FECHA (SUNAT)']
+['FK_Ubicacion', 'INTEGER', 'Llave fornea a DIM_UBICACION.', 'Asignacin desde CPAIS/PAIS_DESC (SUNAT)']
+['FK_Producto', 'INTEGER', 'Llave fornea a DIM_PRODUCTO.', 'Asignacin desde CNAN (SUNAT)']
+['FK_Variedad_Calidad', 'INTEGER', 'Llave fornea a DIM_VARIEDAD_CALIDAD', 'Asignacin desde extraccin Regex en DESC_ADIC']
+['FK_Exportador', 'INTEGER', 'Llave fornea a DIM_EXPORTADOR', 'Asignacin desde NRO_DOCU/EXPORTADOR (SUNAT)']
+['FK_Aduana', 'INTEGER', 'Llave fornea a DIM_ADUANA', 'Asignacin desde CADUANA/ADUA_DESC (SUNAT)']
+['FK_Finanzas', 'INTEGER', 'Llave fornea a DIM_FINANZAS', 'Asignacin por fecha y pas (BCRP + MINCETUR)']
+['FK_Costo', 'INTEGER', 'Llave fornea a DIM_COSTO (SCD Tipo 2)', 'Asignacin por fecha y regin destino']
+['Valor_FOB', 'DECIMAL(18,2)', 'Valor FOB en dlares estadounidenses', 'Campo FOB_DOLPOL (SUNAT)']
+['Volumen_Exportado', 'DECIMAL(18,2)', 'Peso neto en kilogramos', 'Campo PESO_NETO (SUNAT)']
+['NRO_DOCU', 'VARCHAR(20)', 'Nmero de Declaracin nica de Aduanas (DUA)', 'Degenerate dimension']
+['ITEM', 'INTEGER', 'Nmero de lnea dentro de la DUA', 'Degenerate dimension']
+
+--- MATCH IN TABLE 107 ---
+['N', 'Dimensin', 'Tipo', 'Normalizada?']
+['1', 'DIM_TIEMPO', 'Principal', 'No']
+['2', 'DIM_UBICACION', 'Principal', 'S (hacia DIM_PAIS_TLC)']
+['3', 'DIM_PAIS_TLC', 'Subdimensin', 'N/A (hijo de UBICACION)']
+['4', 'DIM_PRODUCTO', 'Principal', 'No']
+['5', 'DIM_VARIEDAD_CALIDAD', 'Independiente', 'No']
+['6', 'DIM_EXPORTADOR', 'Principal', 'No']
+['7', 'DIM_ADUANA', 'Principal', 'No']
+['8', 'DIM_FINANZAS', 'Principal (nueva)', 'No']
+['9', 'DIM_COSTO', 'Principal (SCD Tipo 2)', 'No']
+
+--- MATCH IN TABLE 119 ---
+['Variable', 'Campo en ADUANET', 'Uso en el Data Mart']
+['Fecha de embarque', 'FECHA', 'DIM_TIEMPO']
+['Pas destino', 'CPAIS, PAIS_DESC', 'DIM_UBICACION']
+['Partida arancelaria', 'CNAN', 'DIM_PRODUCTO (filtro para Hass)']
+['Valor FOB', 'FOB_DOLPOL', 'FACT_RENTABILIDAD.Valor_FOB']
+['Peso neto', 'PESO_NETO', 'FACT_RENTABILIDAD.Volumen_Exportado']
+['Exportador (RUC y razn social)', 'NRO_DOCU, EXPORTADOR', 'DIM_EXPORTADOR']
+['Aduana de salida', 'CADUANA, ADUA_DESC', 'DIM_ADUANA']
+['Descripcin adicional', 'DESC_ADIC, DESC_COM', 'DIM_VARIEDAD_CALIDAD (extraccin de atributos)']
+
+--- MATCH IN TABLE 125 ---
+['Tipo', 'Tablas']
+['Dimensiones principales', 'DIM_TIEMPO, DIM_UBICACION, DIM_PRODUCTO, DIM_VARIEDAD_CALIDAD, DIM_EXPORTADOR, DIM_ADUANA, DIM_FINANZAS, DIM_COSTO']
+['Subdimensiones (normalizacin)', 'DIM_PAIS_TLC (conectada a DIM_UBICACION)']
+
+--- MATCH IN TABLE 143 ---
+['WITH Reconstruccion AS (\n    SELECT \n        f.Valor_FOB,\n        f.Volumen_Exportado,\n        f.NRO_DOCU,\n        f.ITEM,\n        t.Fecha,\n        u.Pais_Nombre,\n        e.Razon_Social as Exportador,\n        p.Descripcion_Oficial as Producto,\n        v.Categoria_Calidad,\n        v.Metodo_Produccion,\n        a.Nombre_Aduana,\n        fin.Tipo_Cambio_USD_PEN,\n        c.Tipo_Costo,\n        c.Valor_Unitario_USD\n    FROM "FACT_RENTABILIDAD" f\n    JOIN "DIM_TIEMPO" t ON f."FK_Tiempo" = t."ID_Tiempo"\n    JOIN "DIM_UBICACION" u ON f."FK_Ubicacion" = u."ID_Ubicacion"\n    JOIN "DIM_EXPORTADOR" e ON f."FK_Exportador" = e."ID_Exportador"\n    JOIN "DIM_PRODUCTO" p ON f."FK_Producto" = p."ID_Producto"\n    JOIN "DIM_VARIEDAD_CALIDAD" v ON f."FK_Variedad_Calidad" = v."ID_Variedad_Calidad"\n    JOIN "DIM_ADUANA" a ON f."FK_Aduana" = a."ID_Aduana"\n    JOIN "DIM_FINANZAS" fin ON f."FK_Finanzas" = fin."ID_Finanzas"\n    JOIN "DIM_COSTO" c ON f."FK_Costo" = c."ID_Costo"\n)\nSELECT \n    COUNT(*) as Registros_Reconstruidos,\n    (SELECT COUNT(*) FROM "FACT_RENTABILIDAD") as Registros_Originales\nFROM Reconstruccion;']
+
+--- MATCH IN PARAGRAPHS ---
+Para 319: DIM_ADUANA
+Para 391: public.DIM_ADUANA (Puntos de salida nacionales)

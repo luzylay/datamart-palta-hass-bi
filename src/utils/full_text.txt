@@ -1,0 +1,522 @@
+UNIVERSIDAD TECNOLÓGICA DEL PERÚ
+GRUPO 01
+Creación de un Data Mart para el análisis de la rentabilidad potencial de la palta Hass para la empresa Peruvian Andean Trout S.A.C., con sede en Huancavelica, período 2016–2024
+TRABAJO DE INVESTIGACIÓN DE LA ASIGNATURA
+Inteligencia de Negocios (25534)
+Presentado por:
+Cardenas Gutierrez, Cristian Paul — U22100292
+Choy Sanchez Tejada, David Augusto — U21320903
+Guillena Oria, Bruno Fabian — U20221432
+Loayza Rodriguez, Lady Luz — U22221489
+Moreno Calderon, Francis Alonso Jesus — U22212542
+Salvador Soto, Jeampieer's Jeahison — U22240560
+Docente:
+José Adrián Núñez Huerta
+Lima, Perú
+Junio, 2026
+ÍNDICE DE CONTENIDOS
+1. INTRODUCCIÓN
+1.1 Reseña Histórica de la Empresa
+Peruvian Andean Trout S.A.C. es una empresa peruana constituida como Sociedad Anónima Cerrada, cuyo RUC es 20568513216 y su condición es ACTIVO y HABIDO . La empresa inició operaciones oficialmente el 15 de noviembre de 2012 y su actividad principal es la acuicultura de agua dulce (CIIU: 0322) . Su centro de operaciones está ubicado en la Comunidad Campesina de Choclococha, en el distrito de Santa Ana, provincia de Castrovirreyna, en la región Huancavelica, a más de 4,500 metros sobre el nivel del mar.
+La empresa inició un proceso de diversificación hacia el sector agroexportador. Como parte de este proceso, solicitó un análisis basado en inteligencia de negocios para evaluar la viabilidad de invertir en palta Hass, utilizando datos del mercado de exportación peruano del período 2016–2024.
+1.2 Contexto del Problema
+La empresa Peruvian Andean Trout S.A.C. no cuenta actualmente con información estructurada que le permita evaluar la rentabilidad de la palta Hass como potencial nueva línea de negocio. Los datos disponibles en fuentes públicas presentan limitaciones significativas que impiden un análisis financiero completo y confiable.
+Limitaciones de los datos disponibles
+Justificación de la serie temporal (2016–2024)
+El período de análisis comprende los años 2016 a 2024. Justificación estratégica del rango: La elección del período 2016-2024 se fundamenta en la necesidad de analizar un ciclo económico completo de la industria agroexportadora. Este rango histórico ininterrumpido permite a Peruvian Andean Trout S.A.C. evaluar el comportamiento de los precios y volúmenes de la Palta Hass en escenarios de normalidad (pre-pandemia), disrupción logística (pandemia) y recuperación (post-pandemia), garantizando un análisis de viabilidad robusto y libre de sesgos temporales cortos.
+Análisis de Causa-Raíz (Diagrama de Ishikawa)
+A continuación, se presenta el diagrama de Ishikawa que identifica las causas raíz del problema central: "La empresa no cuenta con información estructurada para evaluar la rentabilidad de la palta Hass".
+Causas identificadas:
+Diagrama Ishikawa:
+Solución propuesta: El Data Mart desarrollado en este proyecto aborda cada una de las causas identificadas.
+1.3 Objetivo General del Proyecto
+Desarrollar un Data Mart que permita analizar la rentabilidad potencial de la palta Hass para la empresa Peruvian Andean Trout S.A.C., mediante la integración y transformación de los microdatos de exportación de la SUNAT correspondientes al período 2016–2024, enriquecidos con fuentes externas de tipo de cambio (BCRP), acuerdos comerciales y aranceles (MINCETUR) y costos referenciales (MIDAGRI/Sierra Exportadora), como base para la toma de decisiones estratégicas sobre diversificación.
+Objetivos Específicos
+1.4 Alcance del Proyecto
+El presente proyecto abarca el análisis del período 2016–2024, centrado en la partida arancelaria 0804400000 correspondiente a la palta Hass. La fuente de datos primaria está conformada por los registros de exportación disponibles en el portal ADUANET de la SUNAT.
+Fuentes de datos utilizadas
+Indicadores que se construirán
+A partir de las variables principales (valor FOB, volumen exportado y mercado de destino), se construirán los siguientes indicadores:
+Nota: El análisis tiene un enfoque referencial, basado en información del mercado de exportación peruano y en costos referenciales, no en datos operativos internos de la empresa. Los resultados constituyen una aproximación para evaluar la rentabilidad potencial.
+Limitaciones del alcance y soluciones implementadas
+Qué queda expresamente fuera del alcance
+La implementación de sistemas en tiempo real.
+La integración con sistemas internos de la empresa (como ERP).
+La inclusión de variables externas como costos logísticos reales, costos de producción específicos de la empresa o factores productivos internos.
+La consulta directa a APIs de SUNAT en tiempo real (la extracción se basa en archivos descargados).
+Beneficiarios directos
+1.5 Metodología Hefesto
+La construcción del Data Mart se guió por la Metodología Hefesto, adaptada al contexto de Peruvian Andean Trout S.A.C. A continuación, se documentan las decisiones clave en cada fase:
+Fase 1 - Análisis de Requerimientos
+Se partió de la pregunta central: "¿Cuál es el nivel de rentabilidad potencial de la palta Hass (2016-2024)?" 
+De esta pregunta derivaron 7 preguntas analíticas de soporte (listadas en 1.7), que definieron los KPIs críticos: 
+Decisión clave: Si el análisis resultara desfavorable, la misma estructura permite evaluar otro producto cambiando únicamente el filtro de partida arancelaria en la dimensión de producto.
+Fase 2 - Análisis de Fuentes de Datos
+Se evaluaron cuatro fuentes de datos. Se identificó que SUNAT (ADUANET) no proporciona costos reales, tipo de cambio ni aranceles, limitaciones críticas para calcular rentabilidad.
+Fase 3 - Modelo Lógico de Datos
+Se diseñó un esquema de Copo de Nieve (Snowflake Schema) con las siguientes características:
+Jerarquías implementadas:
+DIM_TIEMPO: Año → Trimestre → Mes → Semana → Día
+DIM_UBICACION: Continente → País
+DIM_PAIS_TLC (subdimensión): País → Acuerdo TLC → Arancel aplicable
+Fase 4 - Integración de Datos (ETL) y Gestión de Metadatos
+El proceso ETL se implementó en Python con las librerías pandas, dbfread, re y sqlalchemy. Las tres etapas de manipulación se describen a continuación:
+Control de calidad: El proceso ETL se documenta con una bitácora (log) que registra la cantidad de registros procesados, insertados y rechazados por cada regla de validación, asegurando la trazabilidad de la información.
+1.6 Estructura del Data Mart Actual
+El Data Mart se organiza bajo un modelo dimensional tipo Copo de Nieve (Snowflake Schema). Este diseño permite normalizar jerarquías en subdimensiones, evitando redundancias y facilitando el mantenimiento de la información.
+Tabla de hechos central: FACT_RENTABILIDAD
+La tabla de hechos es el centro del modelo y almacena únicamente las métricas atómicas de cada operación de exportación:
+Nota: Las métricas derivadas (precio por kilogramo, margen de utilidad y ratio de rentabilidad) no se almacenan físicamente en la tabla de hechos. Se calculan en la capa de visualización (Power BI) para garantizar consistencia ante futuras actualizaciones de costos o tipo de cambio.
+Tablas de dimensiones (permiten segmentar el análisis)
+Las dimensiones proporcionan el contexto descriptivo para filtrar y agrupar los datos:
+Granularidad del modelo
+La granularidad es fina: un registro en la tabla de hechos corresponde a una línea de producto dentro de una Declaración Única de Aduanas (DUA). Esto significa que cada ítem individual (con su propio valor FOB y peso neto) tiene su propio registro.
+Ventaja de esta granularidad: Permite agregaciones flexibles:
+Jerarquías implementadas
+El detalle completo de atributos, tipos de datos, claves primarias y foráneas, subdimensiones normalizadas y restricciones de integridad referencial se presenta en la sección 5. Modelamiento Dimensional.
+1.7 Preguntas de Negocio que Responde el Data Mart
+El Data Mart ha sido diseñado para dar respuesta a las siguientes preguntas:
+Pregunta Central: 
+¿Cuál es el nivel de rentabilidad potencial de la palta Hass en el período 2016–2024?
+Preguntas Analíticas de Soporte:
+Nota sobre las respuestas. Los resultados obtenidos para preguntas que involucran costos, márgenes y ratios de rentabilidad son estimaciones basadas en parámetros de referencia (provenientes de MIDAGRI y Sierra Exportadora), no en datos reales de la empresa o de los exportadores.
+La incorporación del tipo de cambio (BCRP) y los aranceles (MINCETUR) permite ajustar el análisis a condiciones económicas reales, calculando un Margen Neto Ajustado en soles que supera la limitación de los datos brutos de SUNAT.
+Estos resultados deben interpretarse como una aproximación para la toma de decisiones estratégicas, no como estados financieros auditados.
+2. MARCO TEÓRICO
+2.1 Datos, Información y Sistemas de Información
+En el contexto del presente proyecto, los datos son representaciones simbólicas (numéricas, alfanuméricas) de hechos en bruto, sin procesar, que por sí mismos carecen de significado estratégico. Provienen de múltiples fuentes:
+La información se genera al transformar, limpiar y enriquecer estos datos, dotándolos de contexto y significado para la toma de decisiones. En este proyecto, la información se materializa en indicadores clave como:
+Precio promedio FOB por kilogramo
+Margen de utilidad estimado
+Ratio de rentabilidad
+Índice de concentración de mercado (HHI)
+Margen neto ajustado por tipo de cambio y aranceles
+El sistema de información implementado es un Data Mart en modelo Copo de Nieve (Snowflake Schema) que integra, almacena y permite analizar esta información multidimensionalmente para la toma de decisiones estratégicas sobre la diversificación hacia la palta Hass.
+2.2 Inteligencia de Negocios (Business Intelligence) y diferenciación OLTP vs OLAP
+En el presente proyecto, la arquitectura BI establece una clara distinción entre dos tipos de sistemas de procesamiento:
+El Data Mart, construido bajo un esquema de Copo de Nieve (Snowflake Schema), permite múltiples tipos de análisis:
+Nota metodológica: La evolución del modelo tradicional al aquí propuesto responde a la necesidad de profundidad analítica requerida por la Gerencia General para evaluar la viabilidad de la inversión en palta Hass, incorporando subdimensiones como DIM_PAIS_TLC dependiente de DIM_UBICACION.
+2.3 Modelamiento Dimensional y Esquema Copo de Nieve
+El modelamiento dimensional estructura datos en hechos y dimensiones para consultas analíticas rápidas.
+Tabla de hechos (eventos medibles)
+En el presente proyecto, el centro del modelo se encuentra en la tabla de hechos FACT_RENTABILIDAD, que almacena para cada operación de exportación:
+El valor FOB (ingreso en USD)
+El volumen exportado (peso neto en kg)
+Principio aplicado: Las métricas derivadas (precio promedio por kilogramo, costo total estimado, margen de utilidad y ratio de rentabilidad) se calculan en la capa de visualización (Power BI) o durante el ETL, siguiendo el principio de que una tabla de hechos debe contener solo hechos atómicos e inmutables.
+Dimensiones principales y subdimensiones (atributos contextuales)
+Jerarquías implementadas
+Notas metodológicas
+2.4 Procesos ETL
+El proceso ETL (Extract, Transform, Load) es el núcleo de la arquitectura de Inteligencia de Negocios, responsable de garantizar la calidad, consistencia e integridad de los datos antes de ser depositados en el Data Mart.
+El proyecto implementa un flujo ETL programático y automatizado basado en Python, utilizando las librerías pandas, dbfread, re (expresiones regulares) y sqlalchemy, estructurado en tres fases críticas:
+2.4.1 Fase de Extracción
+Consiste en la recolección de datos desde sistemas de origen heterogéneos. Se emplea una estrategia de ingesta de datos multisistema, respetando la periodicidad de cada fuente. Fueron detalladas en la sección 1.4 Alcance del Proyecto.
+Procesamiento con Regex: El filtrado exclusivo de la variedad 'Hass' se realiza mediante expresiones regulares (Regex), eliminando variaciones ortográficas (ej. "Has", "HASS") y excluyendo productos procesados como "pulpa", "aceite" o "congelado".
+2.4.2 Fase de Transformación: 
+Etapa más compleja donde reside la lógica de negocio. Para el modelo Copo de Nieve, la transformación se divide en cuatro subprocesos:
+2.4.3 Fase de Carga:
+Involucra la inserción física de los datos en el motor de base de datos analítico (PostgreSQL). Para garantizar la estabilidad del esquema Copo de Nieve, se aplican los siguientes principios:
+2.5 KPIs e Indicadores de Rendimiento
+Un KPI (Key Performance Indicator) es un indicador clave de rendimiento que cuantifica el logro de un objetivo estratégico. Para el presente proyecto, se definen los siguientes KPIs, alineados con las necesidades del negocio y las nuevas capacidades del modelo Copo de Nieve:
+Descripción detallada de cada KPI
+Relación entre KPIs y objetivos estratégicos (alineación con BSC)
+Justificación de las metas
+2.6 Balanced Scorecard (BSC)
+En el presente proyecto, el BSC permite alinear la construcción del Data Mart con el objetivo estratégico de Peruvian Andean Trout S.A.C.: analizar la rentabilidad potencial de la palta Hass como nueva línea de negocio, considerando factores de competencia, riesgos cambiarios y aranceles.
+Análisis FODA del Proyecto
+Mapa Estratégico del Proyecto (Perspectivas y Relaciones Causa-Efecto)
+Justificación de las relaciones Causa-Efecto:
+Tablero de Control Estratégico
+Justificación de las metas:
+3. ANÁLISIS DEL CASO
+3.1 Descripción del Negocio
+La empresa Peruvian Andean Trout S.A.C., actualmente dedicada a la acuicultura (producción y comercialización de trucha para exportación), evalúa diversificarse hacia el mercado de la palta Hass (partida arancelaria 0804400000). El presente análisis permite evaluar la viabilidad de esta nueva línea de negocio mediante el estudio de su comportamiento en términos de precios, mercados de destino, competencia, costos de referencia y evolución temporal durante el período 2016-2024.
+Partes interesadas (Stakeholders):
+Organigrama de Peruvian Andean Trout S.A.C.
+La empresa Peruvian Andean Trout S.A.C. presenta la siguiente estructura organizacional para la toma de decisiones relacionadas con el proyecto de diversificación hacia la palta Hass:
+Nota: El equipo de proyecto actúa como consultor externo especializado en Inteligencia de Negocios.
+Equipo de trabajo:
+El presente proyecto es desarrollado por un equipo de 6 integrantes:
+3.2 Requerimientos del Negocio
+Los requerimientos fueron recopilados de:
+Manual de procesos internos de Peruvian Andean Trout S.A.C. (diversificación)
+Normas ISO 9001/22000 aplicables a agroexportación
+Observaciones directas sobre disponibilidad de datos en SUNAT/ADUANET
+Tipos de requerimientos del negocio
+Matriz de requerimientos (prioridad, fuente, conflicto, solución)
+Nota sobre la dimensión CLIENTE (importador final)
+SUNAT no registra el nombre ni RUC del importador/comprador final en los microdatos de exportación públicos. Por lo tanto, no es posible construir una dimensión DIM_CLIENTE directa.
+Solución proxy aprobada: Se utiliza DIM_UBICACION (país de destino) como aproximación del mercado consumidor.
+El análisis de rentabilidad potencial no requiere identificar clientes individuales, sino mercados objetivo.
+Los aranceles y acuerdos comerciales (TLC) dependen exclusivamente del país destino, no del importador específico.
+La concentración de riesgo se evalúa a nivel de país, no de cliente final.
+Se reconoce esta limitación como una simplificación válida para el alcance del proyecto (evaluación de viabilidad de inversión previa a la entrada al mercado).
+Análisis de conflictos y soluciones
+Matriz de necesidades del negocio (Requerimientos vs KPIs):
+Nota técnica: El KPI "Precio promedio FOB/kg" se aplica con dos dimensiones de análisis diferentes (Tiempo y Geografía) para responder a dos necesidades de negocio distintas. Esto no constituye un KPI adicional, sino el mismo indicador utilizado en diferentes ejes de análisis multidimensional, una de las ventajas fundamentales del modelo dimensional.
+Matriz Interfuncional
+Matriz RACI
+A continuación, se detallan las responsabilidades de cada integrante del equipo por tarea específica:
+R = Responsable, A = Aprobador, C = Consultado, I = Informado
+3.3 KPIs Relevantes
+3.3.1 Proceso de Definición de los KPIs
+Los KPIs (Key Performance Indicators) del presente proyecto fueron definidos siguiendo un proceso estructurado de 4 etapas, que asegura que cada indicador esté alineado con los objetivos del negocio y sea técnicamente viable de calcular con las fuentes de datos disponibles.
+Etapa 1: Identificación de necesidades del negocio
+Se realizaron reuniones con los stakeholders (Gerencia General, Planeamiento Estratégico, Finanzas y Comercio Exterior) para identificar sus necesidades de información. De estas reuniones surgieron las siguientes preguntas clave:
+Etapa 2: Revisión de estándares sectoriales
+Se consultaron informes y guías del sector agroexportador para validar que los KPIs propuestos sean comparables con estándares de la industria:
+Etapa 3: Viabilidad técnica
+Para cada KPI propuesto, se verificó que fuera técnicamente viable de calcular con las fuentes de datos disponibles:
+Etapa 4: Selección final y priorización
+Se priorizaron los KPIs según su impacto en la toma de decisiones y su viabilidad técnica. La siguiente tabla resume el proceso de selección:
+3.3.2 Valor Aportado por Cada KPI
+A continuación, se detalla el valor específico que cada KPI aporta a la toma de decisiones de Peruvian Andean Trout S.A.C.:
+KPI 1: Precio Promedio FOB/kg
+KPI 2: Margen de Utilidad Estimado
+KPI 3: Ratio de Rentabilidad
+KPI 4: Índice de Concentración por Destino
+KPI 5: Índice HHI (Herfindahl-Hirschman)
+KPI 6: Margen Neto Ajustado
+3.3.3 Resumen de KPIs y su valor estratégico
+Matriz de necesidades de KPIs
+Los KPIs definidos corresponden a los presentados en la sección 2.5 (Marco Teórico). A continuación, se presentan sus fórmulas:
+Nota sobre el Margen Neto Ajustado: Este KPI incorpora el tipo de cambio (BCRP) para convertir los márgenes a moneda local (PEN) y los aranceles (MINCETUR) para reflejar el costo real de importación en el país destino. Permite una evaluación más realista de la rentabilidad neta.
+Estos valores permitirán a la gerencia evaluar rápidamente si la diversificación hacia la palta Hass es viable y si los resultados se encuentran dentro de los parámetros esperados (rentabilidad meta: 15%-25%). Los valores específicos para Precio y Margen serán determinados tras el procesamiento de datos.
+3.4 Fuentes de Datos
+La arquitectura se alimenta de múltiples fuentes de datos, tanto primarias como externas, para enriquecer el análisis y superar las limitaciones de los datos brutos de SUNAT.
+Fuentes de datos:
+Variables disponibles desde SUNAT (ADUANET):
+Limitaciones de la fuente y soluciones implementadas:
+3.5 Requerimientos Funcionales y No Funcionales
+3.5.1 Requerimientos Funcionales (RF)
+Los requerimientos funcionales describen las capacidades específicas que el Data Mart debe ofrecer a los usuarios. Cada requerimiento incluye: identificador, nombre, descripción detallada, actor involucrado, entrada, proceso y salida esperada.
+RF01: Integración de datos de exportación desde SUNAT
+RF02: Filtrado exclusivo de la variedad Hass
+RF03: Extracción de atributos de calidad desde texto no estructurado
+RF04: Integración de tipo de cambio (BCRP)
+RF05: Integración de aranceles y acuerdos comerciales (MINCETUR)
+RF06: Integración de costos referenciales (MIDAGRI / Sierra Exportadora)
+RF07: Cálculo de KPIs de rentabilidad
+RF08: Generación de reportes en Power BI
+RF09: Clasificación automática de mercados "Premium"
+RF10: Registro de trazabilidad (Log de ETL)
+3.5.2 Requerimientos No Funcionales (RNF)
+Los requerimientos no funcionales describen atributos de calidad que debe cumplir el sistema: rendimiento, disponibilidad, seguridad, escalabilidad, usabilidad, mantenibilidad, confiabilidad y portabilidad.
+RNF01: Rendimiento
+RNF02: Disponibilidad 
+RNF03: Seguridad
+RNF04: Escalabilidad 
+RNF05: Usabilidad 
+RNF06: Mantenibilidad 
+RNF07: Confiabilidad 
+RNF08: Portabilidad 
+3.5.3 Trazabilidad de Requerimientos
+La siguiente tabla vincula cada requerimiento funcional con los stakeholders que lo solicitaron y los componentes técnicos involucrados:
+4. DISEÑO DE ARQUITECTURA DE INTELIGENCIA DE NEGOCIOS
+4.1 Tipo de Arquitectura Propuesta
+La arquitectura de Inteligencia de Negocios seleccionada es una arquitectura bottom-up (ascendente) basada en un Data Mart independiente, estructurada bajo un modelo dimensional tipo Copo de Nieve (Snowflake Schema). El esquema Copo de Nieve es una evolución del esquema Estrella, donde las dimensiones se normalizan en subdimensiones para reducir redundancia. En este proyecto, la normalización responde a la necesidad de:
+Normalizar las jerarquías de las nuevas dimensiones (comerciales y financieras)
+Evitar redundancias
+Permitir un análisis más granular de la rentabilidad
+KPIs que se calculan en la arquitectura:
+4.2 Justificación de la Arquitectura
+La arquitectura seleccionada responde a las siguientes razones:
+Casos de uso del sistema BI:
+Detección de cuellos de botella:
+4.3 Componentes de la Arquitectura
+La arquitectura se compone de los siguientes elementos distribuidos en 4 capas:
+Capa 1: Fuentes de datos
+Capa 2: Procesos ETL
+Capa 3: Almacenamiento analítico (Data Mart)
+Nota importante: DIM_VARIEDAD_CALIDAD es una dimensión independiente, no una subdimensión de DIM_PRODUCTO. Su clave foránea (FK) está directamente en FACT_RENTABILIDAD.
+Capa 4: Visualización y análisis
+Jerarquías de datos implementadas:
+Granularidad del modelo:
+4.4 Diagrama de Arquitectura
+4.5 Arquitectura Escalable a Big Data
+La ingesta de la totalidad de exportaciones peruanas desde SUNAT cumple con las 3 V's del Big Data:
+Estrategia de escalabilidad propuesta:
+Para absorber este volumen en el futuro, la arquitectura migraría de PostgreSQL hacia:
+Nota: Esta escalabilidad es una visión de futuro y no forma parte del alcance actual del proyecto, que se centra exclusivamente en el análisis de la palta Hass.
+5. MODELAMIENTO DIMENSIONAL
+5.1 Tabla de Hechos: FACT_RENTABILIDAD
+La tabla de hechos FACT_RENTABILIDAD es el centro del modelo. Almacena métricas cuantitativas (medidas) que representan eventos de negocio ocurridos en un punto específico del tiempo. En este proyecto, la tabla de hechos FACT_RENTABILIDAD almacena las métricas cuantitativas asociadas a cada operación de exportación de palta Hass.
+Estructura de la tabla de hechos
+Nota sobre degenerate dimensions: Las columnas `NRO_DOCU` e `ITEM` no son llaves foráneas ni medidas. Son atributos descriptivos de la transacción que permiten preservar la granularidad original de los datos de SUNAT (nivel DUA + línea de producto). Según Kimball (2013), estos identificadores transaccionales se almacenan directamente en la tabla de hechos como degenerate dimensions cuando no tienen atributos adicionales que justifiquen una tabla de dimensión separada.
+Resumen de llaves y medidas:
+Nota sobre las claves foráneas: Todas las dimensiones (TIEMPO, UBICACION, PRODUCTO, VARIEDAD_CALIDAD, EXPORTADOR, ADUANA, FINANZAS, COSTO) se relacionan mediante FK directas, garantizando integridad referencial y cumpliendo con el modelo Snowflake.
+5.2 Tablas de Dimensiones
+Las tablas de dimensiones proporcionan el contexto descriptivo para segmentar y filtrar los análisis. En el modelo de Copo de Nieve, algunas dimensiones se han normalizado en subdimensiones para evitar redundancias.
+DIM_TIEMPO
+Permite el análisis temporal de la rentabilidad, con jerarquías que van desde el año hasta el día.
+Jerarquía temporal: Año → Trimestre → Mes → Semana → Fecha
+DIM_UBICACION
+Permite el análisis por mercado de destino. Se ha normalizado para separar la información geográfica base de los acuerdos comerciales.
+Jerarquía geográfica: Continente → País
+Subdimensión: DIM_PAIS_TLC (se relaciona 1:1 con DIM_UBICACION)
+DIM_PRODUCTO
+Contiene la información específica del producto analizado: palta Hass.
+DIM_VARIEDAD_CALIDAD
+Jerarquía: Variedad → Categoria_Calidad → Metodo_Produccion
+DIM_EXPORTADOR
+Identifica a los actores del mercado (competidores) que participan en la exportación de palta Hass.
+DIM_ADUANA
+Describe los puntos de salida (aduanas y puertos) de las exportaciones.
+DIM_FINANZAS
+Esta dimensión integra los datos económicos externos que afectan la rentabilidad neta: tipo de cambio (USD/PEN) y aranceles de importación por país destino. 
+DIM_COSTO (SCD Tipo 2 - Slowly Changing Dimension)
+A diferencia de una tabla de parámetros externa, DIM_COSTO se implementa como una dimensión tradicional con SCD Tipo 2 y FK directa desde FACT_RENTABILIDAD. Esto permite que cada transacción de exportación esté vinculada a los costos de referencia vigentes en su momento histórico. Estructura los costos estimados por tipo, permitiendo calcular el costo total por operación de exportación. Utiliza una estrategia SCD Tipo 2 para mantener el historial de cambios en los costos de producción, empaque y logística.
+Ejemplo de registros en DIM_COSTO (SCD Tipo 2):
+5.3 Relaciones entre Tablas y Diagrama del Modelo
+El modelo implementado es un esquema de Copo de Nieve (Snowflake Schema). Esta evolución respecto al esquema Estrella original responde a la necesidad de normalizar las jerarquías de las nuevas dimensiones (comercialización y financiera), evitar redundancias y permitir un análisis más granular de la rentabilidad.
+Esquema estrella original
+Estructura de relaciones
+Resumen de dimensiones implementadas
+Métricas derivadas (NO almacenadas en FACT_RENTABILIDAD)
+Estas métricas se calculan en la capa de visualización (Power BI) mediante medidas DAX, o en vistas materializadas del Data Mart:
+5.4 Diagrama del Modelo Dimensional
+5.5 Gobierno de Datos y Diccionario de Metadata
+Se documenta la metadata separando la regla de negocio (Significado) de su implementación técnica (Cálculo).
+6. PROCESOS ETL
+6.1 Entorno de Desarrollo (IDE)
+Para el presente proyecto, se seleccionó Visual Studio Code (VS Code) como IDE principal.
+6.1.1 IDE Seleccionado
+6.1.2 Justificación de la Elección
+La selección de Visual Studio Code se basa en los siguientes criterios técnicos y prácticos:
+6.1.3 Extensiones Instaladas en VS Code
+6.1.4 Configuración del Entorno de Desarrollo
+A continuación, se detalla la configuración específica utilizada para el proyecto:
+Configuración del intérprete de Python
+Configuración del depurador (launch.json)
+Configuración de variables de entorno (.env)
+6.1.5 Alternativas Evaluadas
+Antes de seleccionar VS Code, se evaluaron las siguientes alternativas:
+Decisión final: Se eligió VS Code porque ofrece el mejor equilibrio entre funcionalidad, rendimiento y costo cero, cubriendo todas las necesidades del proyecto: depuración de Python, control de versiones, conexión a bases de datos y ejecución de notebooks interactivos para pruebas de Regex.
+6.1.6 Evidencia de uso en el proyecto
+6.2 Fase de Extracción
+Se implementará un proceso automatizado desarrollado en Python (utilizando las librerías pandas, dbfread y sqlalchemy) encargado de la descarga, integración y consolidación de los microdatos de exportación provenientes de ADUANET, así como de fuentes externas complementarias (BCRP, MINCETUR, Sierra Exportadora).
+Fuente de datos:
+Variables extraídas desde SUNAT:
+Nota: El campo EXPORTADOR se extrae como identificador del competidor. No se incorpora como cliente final porque SUNAT no registra al importador.
+Problemas identificados en la fuente:
+6.3 Fase de Transformación
+La fase de transformación tiene como objetivo asegurar la calidad, consistencia y estructura de los datos, mediante su limpieza, estandarización, integración y adecuación al modelo dimensional de Copo de Nieve.
+Subproceso 1: Limpieza y Validación de Datos SUNAT
+Subproceso 2: Estandarización y Normalización
+Subproceso 3: Enriquecimiento con Fuentes Externas
+Subproceso 4: Cálculo de Indicadores
+Nota importante: Siguiendo el principio de Kimball de hechos atómicos, ninguna de estas métricas derivadas se almacena físicamente en FACT_RENTABILIDAD. Se calculan dinámicamente en la capa de visualización (Power BI) utilizando los valores de DIM_COSTO vigentes para cada período, garantizando consistencia ante actualizaciones de costos de referencia.
+Modelado dimensional (organización de tablas)
+Los datos transformados se organizan en la tabla de hechos FACT_RENTABILIDAD y las siguientes tablas, incorporando claves sustitutas (surrogate keys) para optimizar la gestión histórica:
+Nota: DIM_COSTO es una dimensión tradicional con SCD Tipo 2 y FK directa. No existe tabla de parámetros en este modelo.
+6.4 Fase de Carga y Validación de Integridad Referencial
+La fase de carga consiste en la inserción de los datos previamente transformados en el Data Mart, asegurando su disponibilidad para el análisis y la generación de reportes.
+Estrategia de carga:
+Estructura de almacenamiento:
+El Data Mart se implementa en el motor de base de datos relacional PostgreSQL, utilizando un esquema de Copo de Nieve (Snowflake Schema) estructurado bajo el esquema por defecto (public). Esta configuración está optimizada para el aislamiento de tablas analíticas y el rendimiento de consultas a través del motor tabular de Power BI.
+Secuencia de carga (orden estricto por integridad referencial)
+Para evitar violaciones de restricciones de llave foránea (FOREIGN KEY constraints), la carga en PostgreSQL sigue un orden jerárquico estricto:
+Carga de dimensiones independientes (Nivel 0):
+public.DIM_TIEMPO (Generación de fechas mediante script)
+public.DIM_COSTO (Carga histórica inicial con estrategia SCD Tipo 2)
+Carga de dimensiones con dependencias geográficas y comerciales (Nivel 1):
+public.DIM_UBICACION (Países normalizados)
+public.DIM_PAIS_TLC (Relacionada a la anterior, estructurando el Copo de Nieve)
+Carga de dimensiones operativas y de producto (Nivel 2):
+public.DIM_PRODUCTO (Filtrado por partida arancelaria de Palta Hass)
+public.DIM_VARIEDAD_CALIDAD (Atributos extraídos por Regex)
+public.DIM_EXPORTADOR (Empresas competidoras limpias)
+public.DIM_ADUANA (Puntos de salida nacionales)
+Carga de dimensiones financieras transaccionales (Nivel 3):
+public.DIM_FINANZAS (Requiere que existan previamente el tiempo y la ubicación para el cruce de Tipo de Cambio y Aranceles)
+Carga de la Tabla de Hechos Central (Nivel 4):
+public.FACT_RENTABILIDAD (Inserción final indexando todas las llaves sustitutas/foráneas generadas en los pasos previos)
+Validación y control de calidad:
+Código SQL para validación de integridad referencial
+Validación de FK nulas en FACT_RENTABILIDAD
+Conclusión: No se detectaron llaves foráneas nulas. La integridad referencial básica está garantizada.
+Validación de FK que apuntan a registros inexistentes (huérfanos)
+Conclusión: No se detectaron registros huérfanos. La integridad referencial está garantizada al 100%.
+Validación de duplicados en la tabla de hechos (misma DUA + ITEM)
+Conclusión: No existen registros duplicados a nivel de granularidad DUA + ITEM. Cada línea de producto dentro de cada Declaración Única de Aduanas es única.
+6.5 Proceso de Normalización de Datos (1NF → 5NF)
+Para garantizar la calidad, consistencia e integridad de los datos almacenados en el Data Mart, se aplicó un proceso sistemático de normalización basado en las Formas Normales (1NF a 5NF) propuestas por Edgar F. Codd. Este proceso transformó los datos crudos de SUNAT (formato plano y desnormalizado) en un modelo dimensional tipo Copo de Nieve (Snowflake Schema) optimizado para análisis OLAP.
+A continuación, se documenta cada etapa con ejemplos prácticos, código utilizado y validaciones aplicadas.
+6.5.1 Estado Inicial (Forma Desnormalizada - 0NF)
+Los microdatos de exportación de la SUNAT se presentan como un único archivo plano (DBF/TXT) con múltiples repeticiones y valores no atómicos.
+Ejemplo de datos crudos (0NF):
+Problemas identificados (violaciones a la normalización):
+6.5.2 Primera Forma Normal (1NF) - Atomicidad
+Cada columna debe contener valores atómicos e indivisibles. No debe haber grupos repetidos.
+Transformación realizada:
+Se extrajeron los valores del campo DESC_ADIC mediante expresiones regulares (Regex) en Python.
+Se crearon columnas separadas: Variedad, Categoria_Calidad, Metodo_Produccion.
+Se asignó una clave primaria compuesta (NRO_DOCU, ITEM) o se identificó que la combinación de NRO_DOCU + ITEM permite identificar unívocamente cada línea de producto dentro de una Declaración Única de Aduanas (DUA).
+Resultado después de 1NF (tabla intermedia):
+Validación de 1NF:
+6.5.3 Segunda Forma Normal (2NF) - Dependencia Total
+Eliminar dependencias parciales (atributos que dependen solo de parte de la clave primaria compuesta).
+Problema detectado: La clave primaria es (DUA, ITEM). Sin embargo:
+RUC_EXPORT y EXPORTADOR_NOMBRE dependen solo de DUA, no del ITEM
+PAIS_NOMBRE y CONTINENTE dependen solo de CODIGO_PAIS
+Transformación realizada: Separación en tablas independientes.
+Código Python para la separación:
+Validación de 2NF:
+6.5.4 Tercera Forma Normal (3NF) - Eliminar Dependencias Transitivas
+Los atributos no clave no deben depender de otros atributos no clave.
+Problema detectado: En DIM_UBICACION, los acuerdos comerciales (TLC) y aranceles dependen del país, pero no son atributos directos de la ubicación geográfica. Además, un país puede tener múltiples acuerdos históricos.
+Transformación realizada: Creación de subdimensión DIM_PAIS_TLC.
+Validación de 3NF:
+6.5.5 Forma Normal de Boyce-Codd (BCNF) - Superclaves
+Todo determinante debe ser una superclave.
+Problema detectado: En la tabla de costos, el Tipo_Costo (Producción, Empaque, Logístico) determina el Valor_Unitario_USD para una región y fecha, pero Tipo_Costo no es una superclave por sí solo.
+Transformación realizada: Se rediseñó DIM_COSTO como una dimensión SCD Tipo 2 donde la combinación (Tipo_Costo, Region_Destino, Fecha_Vigencia_Inicio) es la clave única (superclave).
+Estructura final de DIM_COSTO (BCNF):
+Código SQL para validar BCNF (sin solapamiento de fechas):
+Validación de BCNF:
+6.5.6 Cuarta Forma Normal (4NF) - Eliminar Dependencias Multivaluadas
+No debe haber dos o más relaciones multivaluadas independientes en la misma tabla.
+Problema detectado: En los datos originales, un mismo producto podía tener múltiples calidades y múltiples métodos de producción registrados en un solo campo. No se puede saber si "CAT 1" corresponde a "ORGÁNICO" o si son combinaciones independientes.
+Transformación realizada: Se separó DIM_VARIEDAD_CALIDAD como una dimensión independiente (no subdimensión de DIM_PRODUCTO).
+Ejemplo de la separación:
+Validación de 4NF:
+6.5.7 Quinta Forma Normal (5NF) - Dependencia de Join (Descomposición sin pérdida)
+La tabla original debe poder reconstruirse exactamente mediante joins de las tablas resultantes, sin filas adicionales o faltantes.
+Validación realizada: Se verificó que el siguiente join reconstruye exactamente la tabla original.
+Código SQL para validar 5NF (reconstrucción sin pérdida):
+Resultado esperado:
+Validación de 5NF:
+6.5.8 Resumen del Proceso de Normalización Aplicado
+7. VISUALIZACIÓN Y ANÁLISIS
+7.1 Análisis de KPIs
+Al conectarse a PostgreSQL, Power BI conserva el esquema por defecto (public) como prefijo en el nombre de las tablas. Por lo tanto, el código DAX hace referencia explícita a 'public' seguido del nombre de la tabla.
+A continuación, se presentan los 6 KPIs definidos para el proyecto, sus fórmulas de cálculo, metas establecidas y las medidas DAX que los implementan en Power BI.
+7.1.1 KPI 1: Precio Promedio FOB/kg
+Fórmula:
+Meta: Variable por país destino (identificar mercados premium)
+¿Qué pregunta responde?
+P2: ¿Qué países y continentes presentan consistentemente un precio promedio FOB/kg superior?
+P5: ¿Qué aduanas presentan mejor precio promedio por kilogramo?
+P6: ¿Qué relación existe entre el volumen exportado y el precio promedio FOB/kg?
+Medida DAX en Power BI:
+7.1.2 KPI 2: Margen de Utilidad Estimado
+Fórmula:
+Meta: Positivo (> 0 USD)
+¿Qué pregunta responde?
+Central: ¿Cuál es el nivel de rentabilidad potencial de la palta Hass?
+Medida DAX en Power BI:
+7.1.3 KPI 3: Ratio de Rentabilidad (%)
+Fórmula:
+Meta: 15% - 25% (según estándares de Sierra Exportadora)
+¿Qué pregunta responde? (Sección 1.7)
+Central: ¿Cuál es el nivel de rentabilidad potencial de la palta Hass?
+P1: ¿Cómo evoluciona el precio y cómo se compara con el ratio de rentabilidad?
+P2: ¿Qué países presentan un ratio de rentabilidad más alto?
+Medida DAX en Power BI:
+7.1.4 KPI 4: Índice de Concentración por Destino
+Fórmula:
+Meta: < 70% (cartera diversificada)
+¿Qué pregunta responde? (Sección 1.7)
+P3: ¿Cuál es el nivel de concentración de las exportaciones por país destino? ¿Existe riesgo de dependencia excesiva de pocos mercados?
+Medida DAX en Power BI:
+7.1.5 KPI 5: Índice HHI (Herfindahl-Hirschman)
+Fórmula:
+Meta: < 2500 (mercado competitivo)
+¿Qué pregunta responde? (Sección 1.7)
+P4: ¿Qué nivel de concentración presenta el mercado de exportadores peruanos? ¿Existen pocos actores dominantes o el mercado está diversificado?
+Medida DAX en Power BI:
+7.1.6 KPI 6: Margen Neto Ajustado (PEN)
+Fórmula:
+Meta: Positivo (> 0 PEN)
+¿Qué pregunta responde? (Sección 1.7)
+Central: ¿Cuál es el nivel de rentabilidad potencial de la palta Hass? (considerando tipo de cambio y aranceles)
+Medida DAX en Power BI:
+7.1.7 Medidas Adicionales para Segmentación y Formato
+Además de los 6 KPIs principales, se implementaron medidas adicionales para facilitar la segmentación, el formato visual y la interpretación de los resultados:
+7.1.8 Resumen de Metas por KPI
+7.1.9 Mapeo de KPIs a Preguntas de Negocio
+7.2 Estructura del Dashboard
+El archivo analizado Proyecto-Equipo1.pbix está compuesto exactamente por 5 hojas estructuradas de la siguiente manera:
+Página 1: 1. Resumen Ejecutivo
+Visuales:
+3 Tarjetas (card): Muestran de forma global e instantánea los totales agregados de Valor FOB (USD), Volumen total exportado (kg) y el Precio Promedio kg general.
+2 Gráficos de líneas (lineChart): Muestran la tendencia temporal histórica de la exportación año a año.
+1 Gráfico de barras horizontales (clusteredBarChart): Compara el volumen transaccionado por los exportadores principales.
+1 Cuadro de texto (textbox): Describe el contexto inicial del dashboard.
+Página 2: 2. Análisis de Mercados
+Visuales:
+1 Mapa interactivo (azureMap): Visualiza la distribución geográfica mundial de los despachos de palta Hass, facilitando la identificación de zonas calientes de destino.
+1 Tabla detallada (tableEx): Muestra el desglose por País de Destino, Continente, FOB, Volumen, y Precio Promedio.
+1 Gráfico combinado de líneas y columnas (lineStackedColumnComboChart): Cruza el volumen físico frente al precio por kg obtenido por mercado.
+Página 3: 3. Rentabilidad
+Visuales:
+1 Tabla dinámica/Matriz (pivotTable): Detalla el margen de utilidad y los costos asociados por cada país y variedad.
+1 Gráfico de dispersión (scatterChart): Posiciona a los países de destino según su volumen vs. precio unitario, ideal para segmentar los nichos de alto valor de los de volumen transaccional.
+1 Gráfico de barras (barChart): Representa visualmente los ratios de rentabilidad por destino.
+Página 4: 4. Riesgo y Concentración
+Visuales:
+1 Gráfico de áreas/Treemap (treemap): Muestra la participación porcentual de mercado (Market Share) de cada una de las 435 empresas agroexportadoras peruanas de palta.
+1 Gráfico de líneas (lineChart): Muestra la evolución temporal del Índice de Herfindahl-Hirschman (HHI).
+4 Tarjetas de KPIs (card): Resumen los indicadores claves de concentración y volatilidad del mercado.
+Página 5: 5. Recomendación Estratégica
+Visuales:
+1 Tarjeta principal (card): Vinculada a la medida Mensaje Estado, automatiza el texto de recomendación descriptiva adaptada según los filtros aplicados.
+1 Botón de acción (actionButton): Facilita la navegación rápida o reset de filtros.
+1 Tarjeta de semáforo visual (card): Cambia el fondo condicional (Color Rentabilidad) para capturar la atención gerencial de forma inmediata.
+7.3 Análisis Descriptivo e Interpretación de Resultados
+El Comportamiento General del Mercado
+El análisis de las exportaciones de palta Hass peruana refleja un negocio consolidado. A nivel global, la rentabilidad promedio se sitúa en un 20.21% , situándose exactamente dentro del rango objetivo (15%-25%) y validando la viabilidad general de la inversión. El precio promedio FOB del período 2016-2024 es de 2.06 USD/kg , mostrando una tendencia de crecimiento sostenido desde valores cercanos a 1.80 USD/kg en años iniciales hasta alcanzar picos de 2.85 USD/kg en 2023.
+El Descubrimiento de los "Nichos Premium"
+Al segmentar geográficamente el análisis, se identificó una realidad comercial sumamente atractiva en mercados específicos que operan bajo TLC (Acuerdos comerciales vigentes con arancel 0%):
+Interpretación: La rentabilidad general (20.21%) incluye destinos masivos de menor valor. Sin embargo, Israel, Macao y Suiza representan nichos de alto valor unitario que pagan un precio FOB hasta 75% superior al promedio mundial (Israel: $3.60 vs $2.06), logrando rentabilidades que duplican o triplican el umbral esperado.
+Estructura Competitiva y Logística
+Índice HHI: El cálculo arrojó un valor de 1,847, ubicándose por debajo de la barrera crítica de 2,500. Esto clasifica al mercado como altamente competitivo y fragmentado. No existe un monopolio absoluto de las grandes agroexportadoras, lo cual indica que Peruvian Andean Trout S.A.C. tiene espacio de entrada comercial sin enfrentar bloqueos de competidores dominantes.
+Puntos de Salida: La Aduana de Paita concentra el 58% del volumen exportado de palta Hass, seguida por la Aduana Marítima del Callao. Esto orienta la estrategia logística hacia el puerto del norte peruano.
+7.4 Análisis Predictivo
+Aplicando modelos de regresión lineal (línea de tendencia automática en el gráfico de evolución de Power BI), se proyecta que bajo condiciones macroeconómicas y climáticas estables, el precio FOB promedio nacional de la palta Hass alcance los 3.10 USD/kg para el año 2026 (R² = 0.87), lo que consolida un escenario de mediano plazo favorable para iniciar la siembra y comercialización.
+7.5 Storytelling: "De la trucha a la palta"
+El Inicio (Desafío): Peruvian Andean Trout S.A.C. se enfrenta a un mercado de trucha estancado y busca diversificarse.
+El Conflicto: ¿La agroexportación de palta Hass es verdaderamente atractiva o está saturada por competidores gigantescos?
+El Descubrimiento (Clímax): El Data Mart revela que, aunque el promedio del mercado da una rentabilidad moderada del 20.21% , existen mercados premium (Israel, Macao, Suiza) que pagan precios excelentes. Además, el índice HHI de 1,847 confirma que la competencia está lo suficientemente atomizada como para permitir que un nuevo jugador ingrese con éxito.
+La Resolución: La gerencia aprueba la diversificación enfocándose en nichos de alto valor, operando logísticamente a través de la aduana de Paita para optimizar costos de flete.
+7.6 Análisis Exploratorio Profundo y Prueba de Hipótesis (T-Test)
+Se ejecutó un script Python sobre 10,063 registros limpios de exportación para medir la volatilidad:
+Conclusión: Una desviación de casi $0.68 indica volatilidad alta, justificando la necesidad de monitoreo constante de precios mediante BI.
+Pregunta de Negocio: ¿Existe diferencia estadística real entre el precio que paga EE.UU. frente a Europa?
+Hipótesis Nula (H₀): El precio promedio en EE.UU. es igual al de Europa.
+Resultados: P-Value = 2.499e-239. Media EE.UU: 2.37 USD vs Media Europa: 2.03 USD.
+Conclusión Técnica: Dado que el P-Value < 0.05, RECHAZAMOS la hipótesis nula. Es un hecho estadístico que Estados Unidos es un mercado de mayor rentabilidad que Europa para este dataset.
+Nota metodológica: Los estadísticos de esta subsección (media 2.30 USD/kg, varianza 0.4586) fueron calculados sobre una muestra de 10,063 registros. El promedio general del período 2016-2024 calculado sobre el total de 40,588 registros es de 2.06 USD/kg. Esta diferencia es consistente con la heterogeneidad de los datos y no afecta las conclusiones estadísticas.
+7.7 Modelo Predictivo: Regresión Lineal
+Se entrenó un modelo de regresión lineal (scikit-learn) para predecir el Precio FOB utilizando el Volumen Exportado.
+Resultados: R-cuadrado = 0.000067
+Justificación Técnica: Un R² cercano a cero demuestra matemáticamente que el volumen exportado NO tiene capacidad predictiva sobre el precio. Esto comprueba empíricamente que la Palta Hass es un commodity dependiente del mercado internacional.
+7.8 Modelo de Estacionalidad: Análisis de Series de Tiempo
+Para comprender mejor el comportamiento predictivo de la rentabilidad, se ejecutó un análisis de series de tiempo agrupando el precio FOB promedio por mes. Dado que el volumen exportado demostró no ser un predictor válido (Sección 7.7), la variable tiempo se consolida como el factor clave en la fluctuación de los precios agrícolas.
+Resultados: El precio máximo histórico se alcanza en el mes de Noviembre (2.27 USD/kg), mientras que el precio más bajo ocurre en Octubre (1.81 USD/kg).
+Justificación Estratégica: Esta curva de estacionalidad comprueba que la rentabilidad de la Palta Hass depende fuertemente de la ventana de exportación (ley de oferta y demanda global). Para maximizar el retorno de inversión, se recomienda que Peruvian Andean Trout SAC concentre sus campañas de cosecha y envíos internacionales en los meses de mayor cotización, aprovechando la escasez del producto en el hemisferio norte.
+8. CONCLUSIONES
+El presente proyecto de inteligencia de negocios logró el desarrollo e implementación exitosa de un Data Mart bajo un modelo dimensional de copo de nieve (snowflake schema) en PostgreSQL. A través de esta arquitectura, se integraron datos de SUNAT y fuentes económicas externas (BCRP, MINCETUR, MIDAGRI, Sierra Exportadora), permitiendo un análisis exhaustivo de la rentabilidad de la palta Hass en el período 2016-2024. Se implementó un proceso ETL optimizado en Python que aplicó algoritmos de limpieza con expresiones regulares (regex) para identificar exclusivamente la variedad Hass y filtrar registros ruidosos. Asimismo, se construyeron indicadores clave de desempeño (KPI), tales como el margen de utilidad, el ratio de rentabilidad y el índice de concentración Herfindahl-Hirschman (HHI). La visualización de estos datos en Power BI permite concluir que la estructura de datos es capaz de segmentar los mercados con mayor potencial de rentabilidad, logrando una transición exitosa de datos crudos a información estratégica para la toma de decisiones.
+Es fundamental reconocer que la precisión del análisis está sujeta a la naturaleza de las fuentes utilizadas. Los costos operativos empleados son referenciales (provenientes de MIDAGRI y Sierra Exportadora) y no corresponden a costos reales internos de Peruvian Andean Trout SAC, lo que califica la rentabilidad calculada como potencial o estimada. Asimismo, la falta de datos directos sobre el importador final en los registros aduaneros públicos de SUNAT obligó al uso de la ubicación geográfica (DIM_UBICACION) como variable proxy del mercado consumidor, una simplificación válida para el alcance del proyecto. Finalmente, la extracción de datos cualitativos (calidad y método de producción) a partir de campos no estructurados (DESC_ADIC, DESC_COM) mediante expresiones regulares presenta un margen de error propio del procesamiento de lenguaje natural.
+El Data Mart desarrollado provee una herramienta de simulación financiera sustentada en datos reales de aduanas, reduciendo drásticamente la incertidumbre de la Gerencia de Finanzas. Esto permite estimar el retorno de inversión del proyecto de diversificación agrícola antes de comprometer capital en campos de cultivo, transformando el proceso de evaluación de exportaciones de un enfoque empírico a uno basado en evidencia.
+A partir de los hallazgos y limitaciones identificadas, se derivan las siguientes recomendaciones para Peruvian Andean Trout SAC. En el ámbito técnico, se recomienda implementar un sistema ERP agrícola que permita registrar costos operativos internos reales de producción y empaque, reemplazando el costo referencial estimado de 0.85 USD/kg para obtener un margen de utilidad real en futuras versiones del Data Mart. Asimismo, se sugiere escalar el modelo actual hacia un Data Warehouse corporativo que integre otros productos de la canasta agroexportadora peruana. En el ámbito comercial, los resultados (rentabilidad general del 20.21% y superior al 40% en nichos específicos, con un HHI de 2220 puntos y una concentración del Top 3 de 74.21%) justifican comercialmente la diversificación hacia la palta Hass. Se recomienda adoptar un enfoque de mercado dual: mantener envíos de volumen hacia destinos consolidados de Europa (Países Bajos y España), y destinar un porcentaje de la producción de alta calidad (Categoría 1) a nichos premium identificados (Israel, Macao, Puerto Rico, Suiza y Tailandia). Es imperativo priorizar los mercados con tratados de libre comercio (TLC) donde el arancel es nulo (Unión Europea, Estados Unidos, China, Japón, Corea del Sur, Hong Kong, Reino Unido), buscando diversificar la cartera de destinos para evitar que el índice HHI supere los niveles de riesgo establecidos (2500 puntos). Además, se recomienda canalizar los despachos mediante la Aduana de Paita debido a su alta frecuencia de fletes y especialización en el manejo de contenedores refrigerados para palta.
+En conclusión, el sistema desarrollado proporciona una infraestructura analítica sólida que transforma el proceso de evaluación de exportaciones de un enfoque empírico a uno basado en evidencia. Los resultados obtenidos validan que el uso de modelos dimensionales y herramientas de inteligencia de negocios es el camino crítico para que Peruvian Andean Trout SAC logre una diversificación competitiva y sostenible en el sector agroindustrial.
+Como principal recomendación y trabajo futuro, se plantea la evolución del presente Data Mart hacia una arquitectura en tiempo real y predictiva. En primer lugar, se sugiere la implementación de un pipeline de streaming de datos mediante Apache Kafka, lo cual permitirá ingerir las APIs financieras del BCRP al instante y evitar la latencia de los procesos por lotes (mensuales). Asimismo, para potenciar el análisis comercial, resulta fundamental integrar algoritmos de Machine Learning de aprendizaje no supervisado, como el Clustering K-Means. Esto habilitará la segmentación automática de los países en nichos estratégicos (Premium, Estándar y de Riesgo) basándose en su historial de volumen y precio FOB, descubriendo nuevas oportunidades sin intervención manual. Finalmente, para garantizar una gestión proactiva, se debe establecer un patrón de alertas automáticas en Power BI Service que notifique inmediatamente a la Gerencia Financiera en caso de que el Ratio de Rentabilidad global descienda por debajo del umbral crítico del 15%.
+9. REFERENCIAS
+Banco Central de Reserva del Perú. (s. f.). Series estadísticas de comercio exterior. https://www.bcrp.gob.pe/estadisticas.html 
+Compuempresa. (2025). Peruvian Andean Trout S.A.C. - RUC 20568513216. https://compuempresa.com/info/peruvian-andean-trout-sac-C33D92F4B13EC53D 
+Ministerio de Comercio Exterior y Turismo. (2024). Laguna De Choclococha. Plataforma del Estado Peruano. http://consultasenlinea.mincetur.gob.pe/fichaInventario/index.aspx?cod_Ficha=1158 
+Ministerio de Comercio Exterior y Turismo. (2024). Reporte de comercio regional (RCR) – Huancavelica. https://www.gob.pe/institucion/mincetur/colecciones/559-reporte-de-comercio-regional-rcr-huancavelica 
+Ministerio de Desarrollo Agrario y Riego (MIDAGRI). (2023). Sistema Integrado de Estadística Agraria (SIEA) - Costos de producción. https://siea.midagri.gob.pe 
+Ministerio de la Producción. (2017). Resolución Directoral N° 007-2017-PRODUCE/DGPA. https://www.gob.pe/institucion/produce/normas-legales/tipos/26-resolucion-directoral 
+Sierra y Selva Exportadora. (2022). Costos referenciales de logística de exportación para la palta Hass. https://www.sierraexportadora.gob.pe 
+Superintendencia Nacional de Aduanas y de Administración Tributaria. (2024). Operatividad aduanera: Consulta de exportación por partida. http://www.aduanet.gob.pe/operatividadAduana/ 
+Superintendencia Nacional de Aduanas y de Administración Tributaria. (s. f.). Portal de microdatos de exportación y aduanas. https://www.sunat.gob.pe/estadisticasestudios/ 
+Telefono.pe. (2025). Peruvian Andean Trout S.A.C. (PATSAC) - Teléfono y dirección. https://telefono.pe/patsac/ 
+Ubicania. (2025). Peruvian Andean Trout S.A.C. - RUC 20568513216. https://ubicania.com/empresas/peruvian-andean-trout-s-a-c_id_EFEC59B20CC48C22 
+Vassiliadis, P. (2009). A survey of extract–transform–load technology. International Journal of Data Warehousing and Mining, 5(3), 1-27. https://doi.org/10.4018/jdwm.2009070101 
+Anexo: Fórmulas DAX Específicas
+Margen de Utilidad = [Ingreso FOB Total (USD)] - [Costo Total (USD)]
+Precio Promedio FOB = DIVIDE([Ingreso FOB Total (USD)], [Volumen Total (kg)], 0)
+Total Volumen Exportado = SUM('public FACT_RENTABILIDAD'[Volumen_Exportado])
+Costo Total = [Volumen Total (kg)] * [Costo Unitario (USD/kg)]

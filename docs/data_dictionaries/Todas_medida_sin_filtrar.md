@@ -1,0 +1,26 @@
+## Query1
+| MEASURE\_NAME | Tabla | Fórmula | Descripción |
+| --- | --- | --- | --- |
+| % Acumulado FOB | public DIM\_UBICACION | VAR PaisActual = SELECTEDVALUE('public DIM\_UBICACION'[Pais\_Nombre])\nVAR IngresoPais = [Ingreso FOB Total (USD)]\nVAR IngresoTotal = CALCULATE([Ingreso FOB Total (USD)], ALLSELECTED('public DIM\_UBICACION'))\nVAR PaisesMayores =\n FILTER(\n ALLSELECTED('public DIM\_UBICACION'[Pais\_Nombre]),\n [Ingreso FOB Total (USD)] >= IngresoPais\n )\nVAR IngresoAcumulado =\n SUMX(PaisesMayores, [Ingreso FOB Total (USD)])\nRETURN\n DIVIDE(IngresoAcumulado, IngresoTotal, 0) \* 100 | NaN |
+| \_\_Default measure | NaN | 1 | NaN |
+| Categoria\_Precio\_Medida | public FACT\_RENTABILIDAD | VAR PrecioPais = [Precio FOB/kg (USD)]\nRETURN\n SWITCH(\n TRUE(),\n PrecioPais >= 3.00, "Alto",\n PrecioPais >= 2.00, "Medio",\n PrecioPais < 2.00, "Bajo",\n "Sin datos"\n ) | NaN |
+| Color Rentabilidad | public FACT\_RENTABILIDAD | VAR Ratio = [Ratio de Rentabilidad (%)]\nRETURN\n SWITCH(\n TRUE(),\n Ratio >= 25, "#2ECC71", // Verde - Óptima\n Ratio >= 15, "#F39C12", // Amarillo - En objetivo\n Ratio < 15, "#E74C3C", // Rojo - Bajo\n "#FFFFFF" // Blanco (por defecto)\n ) | NaN |
+| Concentración Top 3 (%) | public DIM\_UBICACION | VAR Top3Paises =\n TOPN(\n 3,\n ALLSELECTED('public DIM\_UBICACION'[Pais\_Nombre]),\n [Ingreso FOB Total (USD)],\n DESC\n )\nVAR IngresoTop3 =\n SUMX(Top3Paises, [Ingreso FOB Total (USD)])\nVAR TotalMercado = \n CALCULATE([Ingreso FOB Total (USD)], ALLSELECTED('public DIM\_UBICACION'))\nRETURN\n -- Coerce el resultado a decimal puro para desbloquear la interfaz:\n CONVERT(DIVIDE(IngresoTop3, TotalMercado, 0), DOUBLE) | NaN |
+| Concentración Top 5 (%) | public DIM\_UBICACION | VAR Top5Paises =\n TOPN(\n 5,\n VALUES('public DIM\_UBICACION'[Pais\_Nombre]),\n [Ingreso FOB Total (USD)],\n DESC\n )\nVAR IngresoTop5 =\n SUMX(Top5Paises, [Ingreso FOB Total (USD)])\nRETURN\n DIVIDE(IngresoTop5, [Ingreso FOB Total (USD)], 0) \* 100 | NaN |
+| Costo Total (USD) | public DIM\_COSTO | [Volumen Total (kg)] \* [Costo Unitario (USD/kg)] | NaN |
+| Costo Unitario (USD/kg) | public DIM\_COSTO | SUM('public DIM\_COSTO'[Valor\_Unitario\_USD]) | NaN |
+| Estado Rentabilidad | public FACT\_RENTABILIDAD | VAR Ratio = [Ratio de Rentabilidad (%)]\nRETURN\n IF(Ratio > 25, "🟢 Óptima (>25%)",\n IF(Ratio >= 15, "🟡 En objetivo (15-25%)",\n "🔴 Por debajo del mínimo (<15%)")) | NaN |
+| Fecha Actualización | public DIM\_TIEMPO | FORMAT(NOW(), "DD/MM/YYYY HH:MM:SS") | NaN |
+| HHI (Índice Herfindahl) | public DIM\_UBICACION | VAR TotalIngreso = [Ingreso FOB Total (USD)]\nRETURN\n SUMX(\n VALUES('public DIM\_UBICACION'[Pais\_Nombre]),\n VAR Participacion = DIVIDE([Ingreso FOB Total (USD)], TotalIngreso, 0)\n RETURN Participacion \* Participacion\n ) \* 10000 | NaN |
+| Índice Concentración Destino | public DIM\_UBICACION | VAR PaisSeleccionado = SELECTEDVALUE('public DIM\_UBICACION'[Pais\_Nombre])\nVAR IngresoPais = \n CALCULATE(\n [Ingreso FOB Total (USD)],\n 'public DIM\_UBICACION'[Pais\_Nombre] = PaisSeleccionado\n )\nRETURN\n DIVIDE(IngresoPais, [Ingreso FOB Total (USD)], 0) \* 100 | NaN |
+| Ingreso FOB Soles | public DIM\_FINANZAS | [Ingreso FOB Total (USD)] \* [Tipo Cambio (USD/PEN)] | NaN |
+| Ingreso FOB Total (USD) | public FACT\_RENTABILIDAD | SUM('public FACT\_RENTABILIDAD'[Valor\_FOB]) | NaN |
+| Margen Neto Ajustado | public FACT\_RENTABILIDAD | SUMX(\n 'public FACT\_RENTABILIDAD',\n ('public FACT\_RENTABILIDAD'[Valor\_FOB] \* RELATED('public DIM\_FINANZAS'[Tipo\_Cambio\_USD\_PEN])) -\n ('public FACT\_RENTABILIDAD'[Volumen\_Exportado] \* RELATED('public DIM\_COSTO'[Valor\_Unitario\_USD]) \* RELATED('public DIM\_FINANZAS'[Tipo\_Cambio\_USD\_PEN])) -\n ('public FACT\_RENTABILIDAD'[Valor\_FOB] \* RELATED('public DIM\_FINANZAS'[Arancel\_Porcentaje]) / 100)\n) | NaN |
+| Margen Utilidad (USD) | public DIM\_COSTO | [Ingreso FOB Total (USD)] - [Costo Total (USD)] | NaN |
+| Mensaje Estado | public FACT\_RENTABILIDAD | VAR Ratio = [Ratio de Rentabilidad (%)]\nRETURN\n SWITCH(\n TRUE(),\n Ratio > 25, "✅✅✅ EXCELENTE ✅✅✅\n La rentabilidad supera el 25%, está por encima del objetivo óptimo.",\n Ratio >= 15, "✅ VIABLE ✅\n La rentabilidad está dentro del rango esperado (15-25%).",\n Ratio < 15, "⚠️ ATENCIÓN ⚠️\n La rentabilidad está por debajo del mínimo esperado (15%). Requiere revisión estratégica.",\n "📊 Sin datos"\n ) | NaN |
+| Precio FOB/kg (USD) | public FACT\_RENTABILIDAD | DIVIDE([Ingreso FOB Total (USD)], [Volumen Total (kg)], 0) | NaN |
+| Ratio de Rentabilidad (%) | public FACT\_RENTABILIDAD | DIVIDE([Margen Utilidad (USD)], [Ingreso FOB Total (USD)], 0) \* 100 | NaN |
+| Rentabilidad GENERAL | public FACT\_RENTABILIDAD | VAR Ratio = [Ratio de Rentabilidad (%)]\nRETURN\n IF(Ratio < 15, "🔴 " & FORMAT(Ratio, "0.00") & "%",\n IF(Ratio >= 25, "🟢 " & FORMAT(Ratio, "0.00") & "%",\n "🟡 " & FORMAT(Ratio, "0.00") & "%")) | NaN |
+| Tipo Cambio (USD/PEN) | public DIM\_FINANZAS | AVERAGE('public DIM\_FINANZAS'[Tipo\_Cambio\_USD\_PEN]) | NaN |
+| Umbral Pareto 80% | public DIM\_UBICACION | 0.8 | NaN |
+| Volumen Total (kg) | public FACT\_RENTABILIDAD | SUM('public FACT\_RENTABILIDAD'[Volumen\_Exportado]) | NaN |

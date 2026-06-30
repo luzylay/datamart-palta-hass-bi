@@ -1,0 +1,9 @@
+## Query1
+| MEASURE\_NAME | EXPRESSION | DESCRIPTION |
+| --- | --- | --- |
+| Concentración Top 3 (%) | VAR Top3Paises =\n TOPN(\n 3,\n ALLSELECTED('public DIM\_UBICACION'[Pais\_Nombre]),\n [Ingreso FOB Total (USD)],\n DESC\n )\nVAR IngresoTop3 =\n SUMX(Top3Paises, [Ingreso FOB Total (USD)])\nVAR TotalMercado = \n CALCULATE([Ingreso FOB Total (USD)], ALLSELECTED('public DIM\_UBICACION'))\nRETURN\n -- Coerce el resultado a decimal puro para desbloquear la interfaz:\n CONVERT(DIVIDE(IngresoTop3, TotalMercado, 0), DOUBLE) | NaN |
+| Concentración Top 5 (%) | VAR Top5Paises =\n TOPN(\n 5,\n VALUES('public DIM\_UBICACION'[Pais\_Nombre]),\n [Ingreso FOB Total (USD)],\n DESC\n )\nVAR IngresoTop5 =\n SUMX(Top5Paises, [Ingreso FOB Total (USD)])\nRETURN\n DIVIDE(IngresoTop5, [Ingreso FOB Total (USD)], 0) \* 100 | NaN |
+| HHI (Índice Herfindahl) | VAR TotalIngreso = [Ingreso FOB Total (USD)]\nRETURN\n SUMX(\n VALUES('public DIM\_UBICACION'[Pais\_Nombre]),\n VAR Participacion = DIVIDE([Ingreso FOB Total (USD)], TotalIngreso, 0)\n RETURN Participacion \* Participacion\n ) \* 10000 | NaN |
+| % Acumulado FOB | VAR PaisActual = SELECTEDVALUE('public DIM\_UBICACION'[Pais\_Nombre])\nVAR IngresoPais = [Ingreso FOB Total (USD)]\nVAR IngresoTotal = CALCULATE([Ingreso FOB Total (USD)], ALLSELECTED('public DIM\_UBICACION'))\nVAR PaisesMayores =\n FILTER(\n ALLSELECTED('public DIM\_UBICACION'[Pais\_Nombre]),\n [Ingreso FOB Total (USD)] >= IngresoPais\n )\nVAR IngresoAcumulado =\n SUMX(PaisesMayores, [Ingreso FOB Total (USD)])\nRETURN\n DIVIDE(IngresoAcumulado, IngresoTotal, 0) \* 100 | NaN |
+| Índice Concentración Destino | VAR PaisSeleccionado = SELECTEDVALUE('public DIM\_UBICACION'[Pais\_Nombre])\nVAR IngresoPais = \n CALCULATE(\n [Ingreso FOB Total (USD)],\n 'public DIM\_UBICACION'[Pais\_Nombre] = PaisSeleccionado\n )\nRETURN\n DIVIDE(IngresoPais, [Ingreso FOB Total (USD)], 0) \* 100 | NaN |
+| Umbral Pareto 80% | 0.8 | NaN |
