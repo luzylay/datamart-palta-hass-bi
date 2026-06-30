@@ -106,24 +106,27 @@ python src/etl/ETL_Palta_Hass.py
 
 ---
 
-## 📊 Tableros y Reportes
+## 📊 Presentación del Proyecto (Reporte Completo)
 
-En la carpeta `reports/powerbi/` encontrarás el archivo `Proyecto-Equipo1.pbit`. 
-Al abrir esta plantilla en Power BI, te pedirá las credenciales de tu base de datos local PostgreSQL. Una vez conectada, los gráficos interactivos cobrarán vida, permitiéndote explorar la rentabilidad por puerto, exportador, continente y fecha.
+En lugar de fragmentos aislados, aquí puedes visualizar las hojas completas de nuestro reporte analítico y el tablero final, extraídas directamente de nuestro documento oficial.
 
+<details>
+<summary><strong>👉 Haz clic aquí para desplegar las hojas completas del reporte</strong></summary>
+<br>
 <div align="center">
-  <img src="assets/dashboard_1.png" alt="Dashboard Principal" width="800" style="border-radius:10px; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"/>
-  <br>
-  <em>Vista principal del Dashboard de Rentabilidad de Palta Hass.</em>
+  <img src="assets/page_0.png" alt="Página 1" width="800" style="border: 1px solid #ddd; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"/>
+  <img src="assets/page_1.png" alt="Página 2" width="800" style="border: 1px solid #ddd; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"/>
+  <img src="assets/page_2.png" alt="Página 3" width="800" style="border: 1px solid #ddd; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"/>
+  <img src="assets/page_3.png" alt="Página 4" width="800" style="border: 1px solid #ddd; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"/>
+  <img src="assets/page_4.png" alt="Página 5" width="800" style="border: 1px solid #ddd; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"/>
+  <img src="assets/page_5.png" alt="Página 6" width="800" style="border: 1px solid #ddd; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"/>
+  <img src="assets/page_6.png" alt="Página 7" width="800" style="border: 1px solid #ddd; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"/>
 </div>
+</details>
 
 <br>
 
-<div align="center">
-  <img src="assets/dashboard_2.png" alt="Análisis Detallado" width="800" style="border-radius:10px; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"/>
-  <br>
-  <em>Desglose de exportaciones y análisis financiero.</em>
-</div>
+En la carpeta `reports/powerbi/` encontrarás el archivo `Proyecto-Equipo1.pbit`. Al abrir esta plantilla en Power BI, te pedirá las credenciales de tu base de datos local PostgreSQL. Una vez conectada, los gráficos interactivos cobrarán vida, permitiéndote explorar la rentabilidad por puerto, exportador, continente y fecha.
 
 Para leer el análisis exhaustivo del proyecto, consulta la carpeta `reports/documents/` donde encontrarás el PDF final.
 
