@@ -107,6 +107,27 @@ python src/etl/ETL_Palta_Hass.py
 
 ---
 
+## 📈 Análisis Visual (Ejemplos)
+
+Parte de nuestra exploración incluyó validaciones estadísticas en Python para corroborar las métricas de negocio antes de llevarlas a Power BI. Aquí tienes una muestra de los análisis realizados:
+
+<div align="center">
+  <img src="assets/seasonality_plot.png" alt="Análisis de Estacionalidad" width="800" style="border-radius:10px; margin-bottom: 20px;"/>
+  <br>
+  <em>Estacionalidad de exportaciones a lo largo del año.</em>
+</div>
+
+<br>
+
+<div align="center">
+  <img src="assets/regression_plot.png" alt="Análisis de Regresión" width="400" style="border-radius:10px; margin-right: 10px;"/>
+  <img src="assets/ttest_plot.png" alt="Prueba T" width="400" style="border-radius:10px;"/>
+  <br>
+  <em>Gráficos de Regresión Lineal y Pruebas T-Test para validación de hipótesis económicas.</em>
+</div>
+
+---
+
 ## 📊 Tableros y Reportes
 
 En la carpeta `reports/powerbi/` encontrarás el archivo `Proyecto-Equipo1.pbit`. 
