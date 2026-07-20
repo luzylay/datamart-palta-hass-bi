@@ -134,4 +134,14 @@ Para leer el análisis exhaustivo del proyecto, consulta la carpeta `reports/doc
 
 ---
 
+## 👥 Integrantes y Roles
+
+El proyecto fue desarrollado por el **Grupo 01**:
+- **Choy Sanchez Tejada, David Augusto** (U21320903) – Líder de proyecto
+- **Guillena Oria, Bruno Fabian** (U20221432) – Modelador de datos
+- **Loayza Rodriguez, Lady Luz** (U22221489) – Desarrolladora ETL / Analista de requerimientos
+- **Moreno Calderon, Francis Alonso Jesus** (U22212542) – Desarrollador de dashboards
+- **Salvador Soto, Jeampieer's Jeahison** (U22240560) – Documentador
+
+---
 **Desarrollado con ❤️ por el Grupo 01 - BI Course.**
