@@ -1,13 +1,5 @@
 <div align="center">
   <h1>🥑 Data Mart - Rentabilidad de Palta Hass</h1>
-  
-  <p><strong>Proyecto Integral de Inteligencia de Negocios y Data Engineering para el análisis de exportación peruana.</strong></p>
-
-  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-  [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-  [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-  [![Power BI](https://img.shields.io/badge/PowerBI-F2C811?logo=powerbi&logoColor=black)](https://powerbi.microsoft.com/)
-</div>
 
 <hr />
 
@@ -35,7 +27,7 @@ graph LR
     A[Fuentes: SUNAT/MIDAGRI/BCRP] -->|Extracción .csv/.xlsx| B(Python ETL)
     B -->|Limpieza y Transformación| C[(PostgreSQL Data Mart)]
     C -->|Modelo Estrella| D[Power BI Dashboard]
-    
+  
     style A fill:#f9f,stroke:#333,stroke-width:2px
     style B fill:#bbf,stroke:#333,stroke-width:2px
     style C fill:#f96,stroke:#333,stroke-width:2px
@@ -72,13 +64,15 @@ graph LR
 Si acabas de clonar el repositorio y no sabes por dónde empezar, sigue estos pasos:
 
 ### 1. Prerrequisitos
+
 - Python 3.9 o superior.
 - Motor de base de datos PostgreSQL instalado y corriendo.
-- (Opcional) Power BI Desktop para abrir los tableros.
+- Power BI Desktop para abrir los tableros.
 
 ### 2. Instalación
 
 Clona el repositorio e instala las dependencias de Python:
+
 ```bash
 git clone https://github.com/luzylay/datamart-palta-hass-bi.git
 cd datamart-palta-hass-bi
@@ -86,9 +80,11 @@ pip install -r requirements.txt
 ```
 
 ### 3. Configuración de Base de Datos
+
 Ejecuta los scripts ubicados en la carpeta `sql/` (ej. `ddl.sql` o `Palta_Hass_DM.sql`) en tu cliente de PostgreSQL (pgAdmin o DBeaver) para construir la estructura relacional vacía.
 
 ### 4. Ejecución del Pipeline ETL
+
 Navega a la carpeta de ETL y ejecuta los scripts en el siguiente orden para poblar el Data Mart:
 
 ```bash
@@ -133,7 +129,9 @@ Para leer el análisis exhaustivo del proyecto, consulta la carpeta `reports/doc
 ---
 
 ## 🤝 Contribuciones
+
 ¡Las contribuciones son bienvenidas! Si deseas mejorar los scripts ETL, añadir un análisis exploratorio de datos (EDA) o mejorar el dashboard, por favor lee nuestra [Guía de Contribución](CONTRIBUTING.md) para saber cómo empezar.
 
 ---
+
 **Desarrollado con ❤️ por el Grupo 01 - BI Course.**
