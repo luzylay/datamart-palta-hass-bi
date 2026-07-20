@@ -1,5 +1,12 @@
 <div align="center">
   <h1>🥑 Data Mart - Rentabilidad de Palta Hass</h1>
+  <p><strong>Proyecto Integral de Inteligencia de Negocios y Data Engineering para el análisis de exportación peruana.</strong></p>
+
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+  [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+  [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+  [![Power BI](https://img.shields.io/badge/PowerBI-F2C811?logo=powerbi&logoColor=black)](https://powerbi.microsoft.com/)
+</div>
 
 <hr />
 
