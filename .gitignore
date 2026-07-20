@@ -16,3 +16,25 @@ conversation*.json
 data/raw/*.csv
 data/raw/*.xlsx
 backups/*.sql
+
+# Operating System Files
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# IDE and Editor Workspace settings
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.user
+*.sublime-project
+*.sublime-workspace
+
+# Python packaging and distribution
+build/
+dist/
+*.egg-info/
+
